@@ -33,18 +33,39 @@ var Compiler = (function(){
                     };
             }
         },
-        processNote: function processNote(time,expr){
+        convertNameToMidi: function convertNameToMidi(noteName){
+            var letters = {
+              c: 0, //...semi-tone
+              d: 2, //tone
+              e: 4, //tone
+              f: 5, //semi-tone
+              g: 7, //tone,
+              a: 9, //tone
+              b: 11 //tone
+            };
+            return (12 + (12 * noteName[1] + letters[noteName[0]] ));
+        },
+        processNote: function processNote(startTime,expr){
             return {
                 tag: expr.tag,
-                pitch: expr.pitch,
+                pitch: this.convertNameToMidi(expr.pitch),
                 dur: expr.dur,
-                start: time
+                start: startTime
             };
+        },
+        processRest: function processRest(startTime, expr){
+            return {
+                tag: expr.tag,
+                dur: expr.dur,
+                start: startTime
+            }
         },
         processExpr: function processExpr(startTime, expr){
             switch(expr.tag) {
                 case 'note':
                     return [this.processNote(startTime,expr)];
+                case 'rest':
+                    return [this.processRest(startTime,expr)];
                 case 'par':
                     return this.processExpr(startTime,expr.left).concat(this.processExpr(startTime,expr.right));
                 case 'seq':
@@ -68,4 +89,3 @@ var compile = function(expr){
     var compiler = new Compiler();
     return compiler.compile(expr);
 };
-
