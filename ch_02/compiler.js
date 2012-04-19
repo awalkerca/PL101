@@ -1,9 +1,8 @@
-var Compiler = (function(expr){
+var Compiler = (function(){
     var Constr;
 
     Constr = function(){
         this.start = 0;
-        this.result = [];
     };
 
     Constr.prototype = {
@@ -24,11 +23,13 @@ var Compiler = (function(expr){
                 case 'note':
                     return time + expr.dur;
                 case 'seq':
-                    return time + endTime(time,expr.left) + endTime(time,expr.right);
+                    return time + this.endTime(time,expr.left) + this.endTime(time,expr.right);
+                case 'par':
+                    return time + Math.max(this.endTime(time,expr.left),this.endTime(time,expr.right));
                 default:
                     throw {
                         name: 'TypeError',
-                        message: 'Unknown expression seq'
+                        message: 'Unknown expression tag'
                     };
             }
         },
@@ -44,7 +45,9 @@ var Compiler = (function(expr){
             switch(expr.tag) {
                 case 'note':
                     return [this.processNote(startTime,expr)];
-                case "seq":
+                case 'par':
+                    return this.processExpr(startTime,expr.left).concat(this.processExpr(startTime,expr.right));
+                case 'seq':
                     return this.processExpr(startTime,expr.left).concat(this.processExpr(this.endTime(startTime,expr.left),expr.right));
                 default:
                     throw {
@@ -66,18 +69,3 @@ var compile = function(expr){
     return compiler.compile(expr);
 };
 
-
-
-//TESTS
-var melody1_mus = { tag: 'note', pitch: 'a4', dur: 125 };
-
-var melody2_mus =
-{ tag: 'seq',
-    left:
-    { tag: 'seq',
-        left: { tag: 'note', pitch: 'a4', dur: 250 },
-        right: { tag: 'note', pitch: 'b4', dur: 250 } },
-    right:
-    { tag: 'seq',
-        left: { tag: 'note', pitch: 'c4', dur: 500 },
-        right: { tag: 'note', pitch: 'd4', dur: 500 } } };
