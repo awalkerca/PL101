@@ -1,0 +1,20 @@
+start =
+    atomlist
+
+validchar = [0-9a-zA-Z_?!+\-=@#$%^&*/.]
+
+atom = chars:validchar+ { return chars.join(""); }
+
+
+expression = whitespace "(" whitespace list:atomlist+ whitespace ")" whitespace {return list}
+
+atomlist =
+    whitespace a:atom whitespace { return a; }
+/ a:atom { return a; }
+/ e:expression {return e;}
+
+
+whitespace = spaces*
+
+spaces = " " / "\n" / "\t"
+

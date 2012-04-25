@@ -1,0 +1,7 @@
+start = wordlist
+
+wordlist = head:word tail:wordlist {return [head].concat(wordlist)}
+/ all:word {return [all]}
+
+
+
