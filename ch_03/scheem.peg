@@ -1,25 +1,30 @@
 start =
-    atomlist
+  atomlist
 
 validchar = [0-9a-zA-Z_?!+\-=@#$%^&*/.]
 
-atom = chars:validchar+ { return chars.join(""); }
+atom = chars:validchar+
+  { return chars.join(""); }
 
-quote = "'" expr:expression {return ["quote",expr]}
+quote = "'" expr:expression
+  {return ["quote",expr]}
 
 expression =
   whitespace "(" whitespace list:atomlist+ whitespace ")" whitespace
     {return list}
   /quote
 
-
 atomlist =
-    whitespace a:atom whitespace { return a; }
-/ a:atom { return a; }
-/ e:expression {return e;}
+    whitespace a:atom whitespace
+      { return a; }
+    / a:atom
+      { return a; }
+    / e:expression
+      {return e;}
 
 
-whitespace = spaces*
+whitespace = (space / newline / comment)*
 
-spaces = " " / "\n" / "\t"
-
+space = " " / "\t"
+newline = "\n" / "\r"
+comment = ";;" (!newline.)*
