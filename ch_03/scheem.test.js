@@ -24,3 +24,7 @@ assert.deepEqual( parse("   (     + x 3     )   "), ["+","x","3"] );
 assert.deepEqual( parse("   (    +      1      (      f    x   3     y)      )"),["+", "1", ["f", "x", "3", "y"]]);
 assert.deepEqual( parse("( + 1 \n \t( f x 3 y)\n)"),["+", "1", ["f", "x", "3", "y"]]);
 
+//Add quote syntax
+assert.deepEqual( parse("'(1 2 3)"),["quote", [1,2,3]]);
+assert.deepEqual( parse("( 1 + '(2 3 4 5) + 3)"),["1","+",["quote",["2","3","4","5"]],"+","3"]);
+

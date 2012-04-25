@@ -5,8 +5,13 @@ validchar = [0-9a-zA-Z_?!+\-=@#$%^&*/.]
 
 atom = chars:validchar+ { return chars.join(""); }
 
+quote = "'" expr:expression {return ["quote",expr]}
 
-expression = whitespace "(" whitespace list:atomlist+ whitespace ")" whitespace {return list}
+expression =
+  whitespace "(" whitespace list:atomlist+ whitespace ")" whitespace
+    {return list}
+  /quote
+
 
 atomlist =
     whitespace a:atom whitespace { return a; }
